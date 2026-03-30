@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yılan Oyunu</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>🐍 Yılan Oyunu</h1>
+
+    <section class="hud">
+      <div>Puan: <span id="score">0</span></div>
+      <div>En Yüksek: <span id="highScore">0</span></div>
+      <button id="restartBtn" type="button">Yeniden Başlat</button>
+    </section>
+
+    <canvas id="game" width="480" height="480" aria-label="Yılan oyunu tahtası"></canvas>
+
+    <p class="help">
+      Kontroller: <kbd>Yön Tuşları</kbd> veya <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+    </p>
+    <p id="status" class="status">Başlamak için bir tuşa bas.</p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
