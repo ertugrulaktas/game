@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+body { background: #f8fafc; color: #0f172a; }
+* { box-sizing: border-box; }
+
+.metric-card { @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-panel; }
+.btn-primary { @apply rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-50; }
+.btn-secondary { @apply rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50; }
+.input { @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none ring-accent/20 transition focus:ring-4; }
+.badge { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold; }
