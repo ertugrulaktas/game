@@ -1,0 +1,153 @@
+// PostgreSQL-compatible schema for the LoadOptima AI MVP domain.
+// The current MVP persists scenarios locally in the browser; this schema is ready
+// for enabling Prisma-backed storage when DATABASE_URL is configured.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  createdAt DateTime @default(now())
+}
+
+model Company {
+  id        String     @id @default(cuid())
+  name      String
+  users     User[]
+  scenarios Scenario[]
+  vehicles  VehicleType[]
+  createdAt DateTime   @default(now())
+}
+
+model Scenario {
+  id          String     @id @default(cuid())
+  scenarioName String
+  company     Company?  @relation(fields: [companyId], references: [id])
+  companyId   String?
+  vehicle     VehicleType @relation(fields: [vehicleId], references: [id])
+  vehicleId   String
+  cargoItems  CargoItem[]
+  loadingPlans LoadingPlan[]
+  reports     Report[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CargoItem {
+  id          String   @id @default(cuid())
+  scenario    Scenario @relation(fields: [scenarioId], references: [id])
+  scenarioId  String
+  itemCode    String
+  itemName    String
+  category    String
+  lengthCm    Float
+  widthCm     Float
+  heightCm    Float
+  weightKg    Float
+  quantity    Int
+  stackable   Boolean
+  maxStackLevel Int
+  fragile     Boolean
+  rotatable   Boolean
+  allowedRotations Json
+  hazardous   Boolean
+  loadingPriority Int
+  deliverySequence Int
+  palletized  Boolean
+  palletType  String?
+  color       String
+  notes       String?
+}
+
+model VehicleType {
+  id          String   @id @default(cuid())
+  company     Company? @relation(fields: [companyId], references: [id])
+  companyId   String?
+  scenarios   Scenario[]
+  vehicleName String
+  vehicleType String
+  innerLengthCm Float
+  innerWidthCm  Float
+  innerHeightCm Float
+  maxPayloadKg  Float
+  emptyWeightKg Float
+  fuelType      String
+  emissionFactorKgCO2PerKm Float
+  maxVolumeM3   Float
+  loadingDoorPosition String
+  allowSideLoading Boolean
+  allowTopLoading Boolean
+  customConstraints Json?
+}
+
+model LoadingPlan {
+  id          String @id @default(cuid())
+  scenario    Scenario @relation(fields: [scenarioId], references: [id])
+  scenarioId  String
+  name        String
+  strategy    String
+  score       Float
+  metrics     OptimizationResult?
+  placements  Placement[]
+  carbon      CarbonFootprintResult?
+}
+
+model Placement {
+  id          String @id @default(cuid())
+  loadingPlan LoadingPlan @relation(fields: [loadingPlanId], references: [id])
+  loadingPlanId String
+  cargoItemId String
+  x Float
+  y Float
+  z Float
+  lengthCm Float
+  widthCm Float
+  heightCm Float
+  weightKg Float
+  loadingOrder Int
+  warnings Json
+}
+
+model OptimizationResult {
+  id          String @id @default(cuid())
+  loadingPlan LoadingPlan @relation(fields: [loadingPlanId], references: [id])
+  loadingPlanId String @unique
+  volumeUtilization Float
+  floorUtilization Float
+  payloadUtilization Float
+  unusedVolumeM3 Float
+  loadedItemCount Int
+  unloadedItemCount Int
+  centerOfGravity Json
+  riskScore Float
+}
+
+model CarbonFootprintResult {
+  id          String @id @default(cuid())
+  loadingPlan LoadingPlan @relation(fields: [loadingPlanId], references: [id])
+  loadingPlanId String @unique
+  routeName String
+  distanceKm Float
+  totalKgCO2e Float
+  kgCO2ePerTonKm Float
+  carbonIntensityScore Float
+}
+
+model Report {
+  id        String @id @default(cuid())
+  scenario  Scenario @relation(fields: [scenarioId], references: [id])
+  scenarioId String
+  reportType String
+  fileName String
+  createdAt DateTime @default(now())
+}
